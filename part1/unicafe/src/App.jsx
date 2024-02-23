@@ -128,9 +128,9 @@ const App = () => {
       <table>
         <tbody>
           <tr>
-            <th><Button handleClick={handleGoodClick} text="good" /></th>
-            <th><Button handleClick={handleNeutralClick} text="neutral" /></th>
-            <th><Button handleClick={handleBadClick} text="bad" /></th>
+            <td><Button handleClick={handleGoodClick} text="good" /></td>
+            <td><Button handleClick={handleNeutralClick} text="neutral" /></td>
+            <td><Button handleClick={handleBadClick} text="bad" /></td>
           </tr>
         </tbody>
       </table>
