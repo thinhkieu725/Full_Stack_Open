@@ -9,11 +9,22 @@ const Search = ({newSearch, handleNewSearch}) => {
   )
 }
 
-const Numbers = ({persons}) => {
+const Numbers = ({persons, handleDeletePerson}) => {
   return (
-    <div>
-    {persons.map(person => <p key={person.id}>{person.name} {person.number}</p>)}
-    </div>
+    <table>
+      <tbody>
+      {
+      persons.map(person => {
+        return (
+        <tr key={person.id}>
+          <td><p key={person.id}>{person.name} {person.number}</p></td>
+          <td><button onClick={handleDeletePerson(person.id, person.name)}>delete</button></td>
+        </tr>
+        )
+      })
+      }
+      </tbody>
+    </table>
   )
 }
 
@@ -48,22 +59,47 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
 
-    if (persons.find(person => person.name === newName) != undefined) {
-      alert(`${newName} is already added to phonebook`)
+    const alreadyStoredPerson = persons.find(person => person.name === newName)
+    if (alreadyStoredPerson != undefined) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        phonebookService
+        .changeNumber(alreadyStoredPerson, newNumber)
+        .then(changedPerson =>{
+          setPersons(persons.map(person => {
+            if (person.name === changedPerson.name) return changedPerson
+            else return person
+          }))
+        })
       setNewName('')
       setNewNumber('')
+      }
     }
     else {
       let newPerson = {
-        id: persons.length + 1,
         name: newName,
         number: newNumber,
       }
-      setPersons(persons.concat(newPerson))
-      setNewName('')
-      setNewNumber('')
-      console.log(persons)
+      phonebookService
+        .create(newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
     }
+  }
+
+  const handleDeletePerson = (id, name) => {
+    return ( () => {
+      if (window.confirm(`Delete ${name} ?`)) {
+        phonebookService
+          .remove(id)
+          .then(deletedPerson => {
+            setPersons(persons.filter((person) => person.id !== id));
+            console.log(deletedPerson)
+          })
+        }
+    })
   }
 
   const handleNameChange = (event) => {
@@ -90,7 +126,7 @@ const App = () => {
       <AddPersonForm newName={newName} handleNameChange={handleNameChange} 
       newNumber={newNumber} handleNumberChange={handleNumberChange} addPerson={addPerson} />
       <h2>Numbers</h2>
-      <Numbers persons={personsToShow} />
+      <Numbers persons={personsToShow} handleDeletePerson={handleDeletePerson} />
     </div>
   )
 }
