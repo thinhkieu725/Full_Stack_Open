@@ -15,6 +15,7 @@ beforeEach(async () => {
   const blogObjects = helper.initialBlogs
     .map(blog => new Blog(blog))
   const promiseArray = blogObjects.map(blog => blog.save())
+  
   await Promise.all(promiseArray)
 })
 
@@ -45,6 +46,7 @@ test('a valid blog can be added', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${helper.initialUsers[0].token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
