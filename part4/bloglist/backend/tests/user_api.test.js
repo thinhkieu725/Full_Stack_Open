@@ -49,6 +49,8 @@ describe('users', () => {
       .expect(400)
 
     const usersAtEnd = await helper.usersInDb()
+    console.log(usersAtStart)
+    console.log(usersAtEnd)
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
