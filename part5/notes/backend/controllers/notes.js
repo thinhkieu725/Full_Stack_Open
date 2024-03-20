@@ -14,7 +14,7 @@ const getTokenFrom = request => {
 
 notesRouter.get('/', async (request, response) => {
   const notes = await Note.find({})
-  response.json(notes);
+  response.json(notes)
 })
 
 notesRouter.get('/:id', async (request, response) => {
@@ -55,7 +55,7 @@ notesRouter.delete('/:id', async (request, response) => {
 
 })
 
-notesRouter.put('/:id', (request, response, next) => {
+notesRouter.put('/:id', (request, response) => {
   const body = request.body
 
   const note = {
