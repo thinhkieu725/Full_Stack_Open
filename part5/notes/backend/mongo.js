@@ -9,7 +9,7 @@ const password = process.argv[2]
 
 const url =
   `mongodb+srv://fullstack1:${password}@cluster0.ztsnlyc.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster0`
-  const urlForTesting =
+const urlForTesting =
   `mongodb+srv://fullstack1:${password}@cluster0.ztsnlyc.mongodb.net/testNoteApp?retryWrites=true&w=majority&appName=Cluster0`
 
 mongoose.set('strictQuery', false)
