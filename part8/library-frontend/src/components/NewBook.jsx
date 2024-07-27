@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { ADD_BOOK, GET_ALL_BOOKS, GET_ALL_AUTHORS } from './queries'
+import { ADD_BOOK, GET_ALL_BOOKS, GET_ALL_AUTHORS } from '../queries'
 
 const NewBook = () => {
   const [title, setTitle] = useState('')
@@ -10,7 +10,30 @@ const NewBook = () => {
   const [genres, setGenres] = useState([])
 
   const [ addBook ] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: GET_ALL_BOOKS }, { query: GET_ALL_AUTHORS }]
+    update: (cache, response) => {
+      const addBook = response.data.addBook
+      if (cache.readQuery({ query: GET_ALL_BOOKS })) {  
+        cache.updateQuery({ query: GET_ALL_BOOKS }, ({ allBooks }) => {
+          return {
+            allBooks: allBooks.concat(response.data.addBook),
+          }
+        })
+      }
+      const involvedGenres = addBook.genres
+      involvedGenres.forEach(genre => {
+        if (genre === '') return
+        if (cache.readQuery({ query: GET_ALL_BOOKS, variables: { genre } })) {
+          cache.updateQuery({ query: GET_ALL_BOOKS, variables: { genre } }, ({ allBooks }) => {
+            return {
+              allBooks: allBooks.concat(response.data.addBook),
+            }
+          })
+        }
+      })
+    },
+    refetchQueries: [
+      { query: GET_ALL_AUTHORS }
+    ]
   })
 
   const submit = async (event) => {
@@ -26,6 +49,9 @@ const NewBook = () => {
   }
 
   const addGenre = () => {
+    if (genre === '') 
+      return
+
     setGenres(genres.concat(genre))
     setGenre('')
   }
