@@ -12,9 +12,13 @@ const getNonSensitiveEntries = (): NonSensitivePatient[] => {
   }));
 };
 
+const getPatient = (id: string): Patient | undefined => {
+  return patientData.find(patient => patient.id === id);
+};
+
 const addPatient = (entry: NewPatient): Patient => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const id = uuid() as string;
+  const id = uuid();
   const newPatientEntry = {
     id,
     ...entry
@@ -26,5 +30,6 @@ const addPatient = (entry: NewPatient): Patient => {
 export default {
   getEntries,
   getNonSensitiveEntries,
+  getPatient,
   addPatient
 };
